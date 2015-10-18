@@ -29,8 +29,8 @@
 #define _RMFOUNDATION_H_
 
 #include <stdbool.h>
-
 #if __OBJC__
+#import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #endif
 
