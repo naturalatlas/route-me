@@ -26,21 +26,26 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMGenericMapSource.h"
-
 @implementation RMGenericMapSource
 {
-    NSString *_host, *_uniqueTilecacheKey;
+    NSString *_prefix, *_suffix, *_uniqueTilecacheKey;
 }
 
-- (id)initWithHost:(NSString *)host tileCacheKey:(NSString *)tileCacheKey minZoom:(float)minZoom maxZoom:(float)maxZoom
+- (id)initWithPrefix:(NSString *)prefix
+                    suffix:(NSString *)suffix
+              tileCacheKey:(NSString *)tileCacheKey
+                   minZoom:(float)minZoom
+                   maxZoom:(float)maxZoom
 {
     if (!(self = [super init]))
         return nil;
 
-    NSAssert(host != nil, @"Empty host parameter not allowed");
-    NSAssert(tileCacheKey != nil, @"Empty tileCacheKey paramter not allowed");
+    NSAssert(prefix != nil, @"Empty prefix parameter not allowed");
+    NSAssert(suffix != nil, @"Empty suffix parameter not allowed");
+    NSAssert(tileCacheKey != nil, @"Empty tileCacheKey parameter not allowed");
 
-    _host = host;
+    _prefix = prefix;
+    _suffix = suffix;
     _uniqueTilecacheKey = tileCacheKey;
 
     self.minZoom = minZoom;
@@ -55,7 +60,7 @@
               @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f",
               self, tile.zoom, self.minZoom, self.maxZoom);
 
-    return [NSURL URLWithString:[NSString stringWithFormat:@"http://%@/%d/%d/%d.png", _host, tile.zoom, tile.x, tile.y]];
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@/%d/%d/%d%@", _prefix, tile.zoom, tile.x, tile.y, _suffix]];
 }
 
 - (NSString *)uniqueTilecacheKey

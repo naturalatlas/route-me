@@ -36,7 +36,7 @@
 
 - (id)initWithHost:(NSString *)host mapName:(NSString *)mapName tileCacheKey:(NSString *)tileCacheKey minZoom:(float)minZoom maxZoom:(float)maxZoom
 {
-    return [super initWithHost:[NSString stringWithFormat:@"%@:20008/tile/%@", host, mapName] tileCacheKey:tileCacheKey minZoom:minZoom maxZoom:maxZoom];
+    return [super initWithPrefix:[NSString stringWithFormat:@"%@:20008/tile/%@", host, mapName] suffix:@".png" tileCacheKey:tileCacheKey minZoom:minZoom maxZoom:maxZoom];
 }
 
 - (NSURL *)URLForTile:(RMTile)tile
