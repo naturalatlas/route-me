@@ -28,7 +28,7 @@
 #import "RMGenericMapSource.h"
 @implementation RMGenericMapSource
 {
-    NSString *_prefix, *_suffix, *_uniqueTilecacheKey;
+    NSString *_prefix, *_suffix, *_uniqueTilecacheKey, *_shortName, *_shortAttribution, *_longDescription, *_longAttribution;
 }
 
 - (id)initWithPrefix:(NSString *)prefix
@@ -36,6 +36,10 @@
               tileCacheKey:(NSString *)tileCacheKey
                    minZoom:(float)minZoom
                    maxZoom:(float)maxZoom
+                 shortName:(NSString *)shortName
+          shortAttribution:(NSString *)shortAttribution
+           longDescription:(NSString *)longDescription
+           longAttribution:(NSString *)longAttribution
 {
     if (!(self = [super init]))
         return nil;
@@ -50,6 +54,11 @@
 
     self.minZoom = minZoom;
     self.maxZoom = maxZoom;
+
+    _shortName = shortName ? shortName : @"Generic Map Source";
+    _longDescription = longDescription ? longDescription : @"Generic Map Source";
+    _shortAttribution = shortAttribution ? shortAttribution : @"n/a";
+    _longAttribution = longAttribution ? shortAttribution : @"n/a";
 
     return self;
 }
@@ -70,22 +79,22 @@
 
 - (NSString *)shortName
 {
-	return @"Generic Map Source";
+	return _shortName;
 }
 
 - (NSString *)longDescription
 {
-	return @"Generic Map Source";
+	return _longDescription;
 }
 
 - (NSString *)shortAttribution
 {
-	return @"n/a";
+	return _shortAttribution;
 }
 
 - (NSString *)longAttribution
 {
-	return @"n/a";
+	return _longAttribution;
 }
 
 @end
