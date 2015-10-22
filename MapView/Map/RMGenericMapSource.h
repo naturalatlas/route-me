@@ -29,6 +29,6 @@
 
 @interface RMGenericMapSource : RMAbstractWebMapSource
 
-- (id)initWithPrefix:(NSString *)prefix suffix:(NSString *)suffix tileCacheKey:(NSString *)tileCacheKey minZoom:(float)minZoom maxZoom:(float)maxZoom shortName:(NSString *)shortName shortAttribution:(NSString *)shortAttribution longDescription:(NSString *)longDescription longAttribution:(NSString *)longAttribution;
+- (id)initWithPrefix:(NSString *)prefix suffix:(NSString *)suffix tileCacheKey:(NSString *)tileCacheKey minZoom:(float)minZoom maxZoom:(float)maxZoom shortName:(NSString *)shortName shortAttribution:(NSString *)shortAttribution longDescription:(NSString *)longDescription longAttribution:(NSString *)longAttribution supportedScales:(NSArray *)supportedScales;
 
 @end

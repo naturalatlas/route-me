@@ -28,7 +28,7 @@
 #import "RMGenericMapSource.h"
 @implementation RMGenericMapSource
 {
-    NSString *_prefix, *_suffix, *_uniqueTilecacheKey, *_shortName, *_shortAttribution, *_longDescription, *_longAttribution;
+    NSString *_prefix, *_suffix, *_uniqueTilecacheKey, *_shortName, *_shortAttribution, *_longDescription, *_longAttribution, *_supportedScales;
 }
 
 - (id)initWithPrefix:(NSString *)prefix
@@ -40,6 +40,7 @@
           shortAttribution:(NSString *)shortAttribution
            longDescription:(NSString *)longDescription
            longAttribution:(NSString *)longAttribution
+           supportedScales:(NSArray *)supportedScales
 {
     if (!(self = [super init]))
         return nil;
@@ -59,6 +60,7 @@
     _longDescription = longDescription ? longDescription : @"Generic Map Source";
     _shortAttribution = shortAttribution ? shortAttribution : @"n/a";
     _longAttribution = longAttribution ? shortAttribution : @"n/a";
+    _supportedScales = [supportedScales componentsJoinedByString:@","];
 
     return self;
 }
@@ -69,7 +71,15 @@
               @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f",
               self, tile.zoom, self.minZoom, self.maxZoom);
 
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@/%d/%d/%d%@", _prefix, tile.zoom, tile.x, tile.y, _suffix]];
+    NSString *scale = [self currentScale];
+    NSMutableString *suffix = _suffix.mutableCopy;
+    
+    if (![scale isEqualToString:@"1x"]) {
+        NSUInteger i = [suffix rangeOfString:@"." options:NSBackwardsSearch].location;
+        [suffix insertString:[@"@" stringByAppendingString:scale] atIndex:i];
+    }
+    
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@/%d/%d/%d%@", _prefix, tile.zoom, tile.x, tile.y, suffix]];
 }
 
 - (NSString *)uniqueTilecacheKey
@@ -95,6 +105,22 @@
 - (NSString *)longAttribution
 {
 	return _longAttribution;
+}
+
+- (NSString *)currentScale
+{
+    float scale = [[UIScreen mainScreen] scale];
+    if (scale >= 2.0 && [_supportedScales rangeOfString:@"3x"].location != NSNotFound) return @"3x";
+    if (scale >= 1.0 && [_supportedScales rangeOfString:@"2x"].location != NSNotFound) return @"2x";
+    return @"1x";
+}
+
+- (NSUInteger)tileSideLength
+{
+    NSString *scale = [self currentScale];
+    if ([scale isEqualToString:@"2x"]) return 512;
+    if ([scale isEqualToString:@"3x"]) return 768;
+    return 256;
 }
 
 @end

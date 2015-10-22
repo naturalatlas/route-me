@@ -44,7 +44,8 @@
                        shortName:@"Generic TileMill Source"
                 shortAttribution:nil
                  longDescription:nil
-                 longAttribution:nil];
+                 longAttribution:nil
+                 supportedScales:@[@"1x"]];
 }
 
 - (NSURL *)URLForTile:(RMTile)tile
