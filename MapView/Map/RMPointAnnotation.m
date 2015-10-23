@@ -45,7 +45,7 @@
 {
     if ( ! [super layer])
     {
-        RMMarker *marker = [[RMMarker alloc] initWithMapboxMarkerImage:nil tintColor:(RMPostVersion7 ? self.mapView.tintColor : nil)];
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"Marker.png"]];
 
         marker.canShowCallout = YES;
 

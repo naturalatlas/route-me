@@ -46,6 +46,8 @@
 		23A0AAEB0EB90AA6003A4521 /* RMFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 23A0AAEA0EB90AA6003A4521 /* RMFoundation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		25757F4F1291C8640083D504 /* RMCircle.h in Headers */ = {isa = PBXBuildFile; fileRef = 25757F4D1291C8640083D504 /* RMCircle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		25757F501291C8640083D504 /* RMCircle.m in Sources */ = {isa = PBXBuildFile; fileRef = 25757F4E1291C8640083D504 /* RMCircle.m */; };
+		371CE6E91BDAFCEA001AD3B2 /* Marker.png in Resources */ = {isa = PBXBuildFile; fileRef = 371CE6E71BDAFCEA001AD3B2 /* Marker.png */; };
+		371CE6EA1BDAFCEA001AD3B2 /* Marker@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 371CE6E81BDAFCEA001AD3B2 /* Marker@2x.png */; };
 		96492C400FA8AD3400EBA6D2 /* RMGlobalConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B1EB26C610B5D8E6009F8658 /* RMNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = B1EB26C510B5D8E6009F8658 /* RMNotifications.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B8474BA40EB40094006A0BC1 /* RMDatabaseCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B8474B980EB40094006A0BC1 /* RMDatabaseCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -239,6 +241,8 @@
 		25757F4E1291C8640083D504 /* RMCircle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMCircle.m; sourceTree = "<group>"; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView_Prefix.pch; sourceTree = SOURCE_ROOT; };
+		371CE6E71BDAFCEA001AD3B2 /* Marker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Marker.png; path = Map/Resources/Marker.png; sourceTree = "<group>"; };
+		371CE6E81BDAFCEA001AD3B2 /* Marker@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Marker@2x.png"; path = "Map/Resources/Marker@2x.png"; sourceTree = "<group>"; };
 		96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMGlobalConstants.h; sourceTree = "<group>"; };
 		AC3AD3391BD4219600B5ECD1 /* Proj4.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Proj4.xcodeproj; path = ../Proj4/Proj4.xcodeproj; sourceTree = "<group>"; };
 		B1EB26C510B5D8E6009F8658 /* RMNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMNotifications.h; sourceTree = "<group>"; };
@@ -683,6 +687,8 @@
 				DD07A23717F3AF9800E420B2 /* HeadingAngleMaskLarge@2x.png */,
 				DD932BAB165C287000D69D49 /* LoadingTile.png */,
 				DDC8D28517E92ED100A4FB32 /* LoadingTile6.png */,
+				371CE6E71BDAFCEA001AD3B2 /* Marker.png */,
+				371CE6E81BDAFCEA001AD3B2 /* Marker@2x.png */,
 				DD932BA7165C287000D69D49 /* TrackingDot.png */,
 				DD932BA8165C287000D69D49 /* TrackingDot@2x.png */,
 				DD932BAD165C287000D69D49 /* TrackingDotHalo.png */,
@@ -924,6 +930,7 @@
 				DDA2570B1798A95600BBB325 /* TrackingLocationMask.png in Resources */,
 				DDC8D28717E92ED100A4FB32 /* LoadingTile6.png in Resources */,
 				DD932BBE165C287000D69D49 /* TrackingHeading@2x.png in Resources */,
+				371CE6E91BDAFCEA001AD3B2 /* Marker.png in Resources */,
 				DDA257091798A95600BBB325 /* TrackingHeadingMask.png in Resources */,
 				DD932BBF165C287000D69D49 /* TrackingLocation.png in Resources */,
 				DD932BC0165C287000D69D49 /* TrackingLocation@2x.png in Resources */,
@@ -937,6 +944,7 @@
 				DD07A23D17F3AF9800E420B2 /* HeadingAngleMaskLarge@2x.png in Resources */,
 				DD94D46C16C2E064003D5739 /* HeadingAngleMedium.png in Resources */,
 				DD94D46D16C2E064003D5739 /* HeadingAngleMedium@2x.png in Resources */,
+				371CE6EA1BDAFCEA001AD3B2 /* Marker@2x.png in Resources */,
 				DD07A23B17F3AF9800E420B2 /* HeadingAngleMaskSmall@2x.png in Resources */,
 				DD36766B17D94F980001F27B /* mapbox-logo@2x.png in Resources */,
 				DDA257021798A95600BBB325 /* TrackingLocationOffMask@2x.png in Resources */,
