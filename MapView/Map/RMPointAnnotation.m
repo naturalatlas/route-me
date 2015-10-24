@@ -45,7 +45,9 @@
 {
     if ( ! [super layer])
     {
-        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[RMMapView resourceImageNamed:@"Marker.png"]];
+        UIImage *img = [RMMapView resourceImageNamed:@"Marker.png"];
+        
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:img anchorPoint:CGPointMake(0.5,0.8)];
 
         marker.canShowCallout = YES;
 
