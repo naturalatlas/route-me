@@ -2962,7 +2962,7 @@
 
     if (self.quadTree)
     {
-        if (!correctAllAnnotations || _mapScrollViewIsZooming)
+        if (!correctAllAnnotations /*|| _mapScrollViewIsZooming*/)
         {
             for (RMAnnotation *annotation in _visibleAnnotations)
                 [self correctScreenPosition:annotation animated:animated];
