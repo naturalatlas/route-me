@@ -72,7 +72,6 @@
 
     CATiledLayer *tiledLayer = [self tiledLayer];
     size_t levelsOf2xMagnification = _mapView.tileSourcesMaxZoom;
-    if (_mapView.adjustTilesForRetinaDisplay && _mapView.screenScale > 1.0) levelsOf2xMagnification += 1;
     tiledLayer.levelsOfDetail = levelsOf2xMagnification;
     tiledLayer.levelsOfDetailBias = levelsOf2xMagnification;
 
@@ -93,6 +92,7 @@
 
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)context
 {
+    float tileScale = _mapView.tileScale;
     CGRect rect   = CGContextGetClipBoundingBox(context);
     CGRect bounds = self.bounds;
     short zoom    = log2(bounds.size.width / rect.size.width);
@@ -101,7 +101,7 @@
 
     if (self.useSnapshotRenderer)
     {
-        zoom = (short)ceilf(_mapView.adjustedZoomForRetinaDisplay);
+        zoom = (short)ceilf(_mapView.zoom);
         CGFloat rectSize = bounds.size.width / powf(2.0, (float)zoom);
 
         int x1 = floor(rect.origin.x / rectSize),
@@ -119,7 +119,7 @@
             {
                 for (int y=y1; y<=y2; ++y)
                 {
-                    UIImage *tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
+                    UIImage *tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache] scale:tileScale];
 
                     if (IS_VALID_TILE_IMAGE(tileImage))
                         [tileImage drawInRect:CGRectMake(x * rectSize, y * rectSize, rectSize, rectSize)];
@@ -133,13 +133,6 @@
     {
         int x = floor(rect.origin.x / rect.size.width),
             y = floor(fabs(rect.origin.y / rect.size.height));
-
-        if (_mapView.adjustTilesForRetinaDisplay && _mapView.screenScale > 1.0)
-        {
-            zoom--;
-            x >>= 1;
-            y >>= 1;
-        }
 
 //        NSLog(@"Tile @ x:%d, y:%d, zoom:%d", x, y, zoom);
 
@@ -159,7 +152,7 @@
             {
                 // for non-web tiles, query the source directly since trivial blocking
                 //
-                tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
+                tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache] scale:tileScale];
             }
             else
             {
@@ -176,11 +169,11 @@
                     {
                         // ensure only one request for a URL at a time
                         //
-                        @synchronized ([(RMAbstractWebMapSource *)_tileSource URLsForTile:RMTileMake(x, y, zoom)])
+                        @synchronized ([(RMAbstractWebMapSource *)_tileSource URLsForTile:RMTileMake(x, y, zoom) scale:tileScale])
                         {
                             // this will return quicker if cached since above attempt, else block on fetch
                             //
-                            if (_tileSource.isCacheable && [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]])
+                            if (_tileSource.isCacheable && [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache] scale:tileScale])
                             {
                                 dispatch_async(dispatch_get_main_queue(), ^(void)
                                 {
@@ -213,7 +206,7 @@
                     float nextTileX = floor(nextX),
                           nextTileY = floor(nextY);
 
-                    tileImage = [_tileSource imageForTile:RMTileMake((int)nextTileX, (int)nextTileY, currentZoom) inCache:[_mapView tileCache]];
+                    tileImage = [_tileSource imageForTile:RMTileMake((int)nextTileX, (int)nextTileY, currentZoom) inCache:[_mapView tileCache] scale:tileScale];
 
                     if (IS_VALID_TILE_IMAGE(tileImage))
                     {
@@ -244,6 +237,7 @@
 
         if (IS_VALID_TILE_IMAGE(tileImage))
         {
+            /*
             if (_mapView.adjustTilesForRetinaDisplay && _mapView.screenScale > 1.0)
             {
                 // Crop the image
@@ -258,7 +252,7 @@
                 CGImageRef imageRef = CGImageCreateWithImageInRect([tileImage CGImage], cropBounds);
                 tileImage = [UIImage imageWithCGImage:imageRef];
                 CGImageRelease(imageRef);
-            }
+            }*/
 
             if (_mapView.debugTiles)
             {

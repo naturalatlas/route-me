@@ -221,6 +221,7 @@
 @synthesize zoomingInPivotsAroundCenter = _zoomingInPivotsAroundCenter;
 @synthesize minZoom = _minZoom, maxZoom = _maxZoom;
 @synthesize screenScale = _screenScale;
+@synthesize tileScale = _tileScale;
 @synthesize tileCache = _tileCache;
 @synthesize quadTree = _quadTree;
 @synthesize clusteringEnabled = _clusteringEnabled;
@@ -228,7 +229,6 @@
 @synthesize orderMarkersByYPosition = _orderMarkersByYPosition;
 @synthesize orderClusterMarkersAboveOthers = _orderClusterMarkersAboveOthers;
 @synthesize clusterMarkerSize = _clusterMarkerSize, clusterAreaSize = _clusterAreaSize;
-@synthesize adjustTilesForRetinaDisplay = _adjustTilesForRetinaDisplay;
 @synthesize userLocation = _userLocation;
 @synthesize showsUserLocation = _showsUserLocation;
 @synthesize userTrackingMode = _userTrackingMode;
@@ -266,8 +266,8 @@
     _overlayView = nil;
 
     _screenScale = [UIScreen mainScreen].scale;
-
-    _adjustTilesForRetinaDisplay = NO;
+    _tileScale = _screenScale;
+    
     _missingTilesDepth = 1;
     _debugTiles = NO;
 
@@ -1326,7 +1326,7 @@
 
     _mapScrollViewIsZooming = NO;
 
-    NSUInteger tileSideLength = [_tileSourcesContainer tileSideLength];
+    NSUInteger tileSideLength = self.tileSideLength;
     CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
 
     _mapScrollView = [[RMMapScrollView alloc] initWithFrame:self.bounds];
@@ -2116,6 +2116,11 @@
 
 #pragma mark - TileSources
 
+- (float)tileSideLength
+{
+    return 256 * _tileScale;
+}
+
 - (RMTileSourcesContainer *)tileSourcesContainer
 {
     return _tileSourcesContainer;
@@ -2170,7 +2175,7 @@
 
     [self setTileSourcesMinZoom:_tileSourcesContainer.minZoom];
     [self setTileSourcesMaxZoom:_tileSourcesContainer.maxZoom];
-    [self setZoom:[self zoom]]; // setZoom clamps zoom level to min/max limits
+    [self setZoom:[self zoom] animated:NO]; // setZoom clamps zoom level to min/max limits
 
     // Recreate the map layer
     [self createMapView];
@@ -2222,7 +2227,7 @@
     }
     else
     {
-        NSUInteger tileSideLength = [_tileSourcesContainer tileSideLength];
+        NSUInteger tileSideLength = self.tileSideLength;
         CGSize contentSize = CGSizeMake(tileSideLength, tileSideLength); // zoom level 1
 
         RMMapTiledLayerView *tiledLayerView = [[RMMapTiledLayerView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height) mapView:self forTileSource:newTileSource];
@@ -2474,7 +2479,7 @@
 - (void)setMinZoom:(float)newMinZoom
 {
     float boundingDimension = fmaxf(self.bounds.size.width, self.bounds.size.height);
-    float tileSideLength    = _tileSourcesContainer.tileSideLength;
+    float tileSideLength    = self.tileSideLength;
     float clampedMinZoom    = log2(boundingDimension / tileSideLength);
 
     if (newMinZoom < clampedMinZoom)
@@ -2498,9 +2503,6 @@
 - (void)setTileSourcesMinZoom:(float)tileSourcesMinZoom
 {
     tileSourcesMinZoom = ceilf(tileSourcesMinZoom) - 0.99;
-
-    if ( ! self.adjustTilesForRetinaDisplay && _screenScale > 1.0 && ! [RMMapboxSource isUsingLargeTiles])
-        tileSourcesMinZoom -= 1.0;
 
     [self setMinZoom:tileSourcesMinZoom];
 }
@@ -2526,9 +2528,6 @@
 {
     tileSourcesMaxZoom = floorf(tileSourcesMaxZoom);
 
-    if ( ! self.adjustTilesForRetinaDisplay && _screenScale > 1.0 && ! [RMMapboxSource isUsingLargeTiles])
-        tileSourcesMaxZoom -= 1.0;
-
     [self setMaxZoom:tileSourcesMaxZoom];
 }
 
@@ -2548,7 +2547,7 @@
     _zoom = (newZoom > _maxZoom) ? _maxZoom : newZoom;
     _zoom = (_zoom < _minZoom) ? _minZoom : _zoom;
 
-//    RMLog(@"New zoom:%f", _zoom);
+    //RMLog(@"New zoom:%f", _zoom);
 
     _mapScrollView.zoomScale = exp2f(_zoom);
 
@@ -2559,18 +2558,12 @@
 {
     float zoom = ceilf(_zoom);
 
-    if ( ! self.adjustTilesForRetinaDisplay && _screenScale > 1.0 && ! [RMMapboxSource isUsingLargeTiles])
-        zoom += 1.0;
-
     return zoom;
 }
 
 - (void)setTileSourcesZoom:(float)tileSourcesZoom
 {
     tileSourcesZoom = floorf(tileSourcesZoom);
-
-    if ( ! self.adjustTilesForRetinaDisplay && _screenScale > 1.0 && ! [RMMapboxSource isUsingLargeTiles])
-        tileSourcesZoom -= 1.0;
 
     [self setZoom:tileSourcesZoom];
 }
@@ -2617,28 +2610,6 @@
     _bouncingEnabled = enableBouncing;
     _mapScrollView.bounces = enableBouncing;
     _mapScrollView.bouncesZoom = enableBouncing;
-}
-
-- (void)setAdjustTilesForRetinaDisplay:(BOOL)doAdjustTilesForRetinaDisplay
-{
-    if (_adjustTilesForRetinaDisplay == doAdjustTilesForRetinaDisplay)
-        return;
-
-    _adjustTilesForRetinaDisplay = doAdjustTilesForRetinaDisplay;
-
-    RMProjectedPoint centerPoint = [self centerProjectedPoint];
-
-    [self createMapView];
-
-    [self setCenterProjectedPoint:centerPoint animated:NO];
-}
-
-- (float)adjustedZoomForRetinaDisplay
-{
-    if (!self.adjustTilesForRetinaDisplay && _screenScale > 1.0 && ! [RMMapboxSource isUsingLargeTiles])
-        return [self zoom] + 1.0;
-
-    return [self zoom];
 }
 
 - (RMProjection *)projection
@@ -2850,7 +2821,7 @@
     RMProjectedRect planetBounds = _projection.planetBounds;
 
     double scale = (1<<aTile.zoom);
-    double tileSideLength = [_tileSourcesContainer tileSideLength];
+    double tileSideLength = [self tileSideLength];
     double tileMetersPerPixel = planetBounds.size.width / (tileSideLength * scale);
 
     CGPoint bottomLeft = CGPointMake(aTile.x * tileSideLength, (scale - aTile.y - 1) * tileSideLength);

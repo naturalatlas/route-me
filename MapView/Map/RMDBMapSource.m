@@ -159,7 +159,7 @@
     _center.latitude = [self getPreferenceAsFloat:kCoverageCenterLatitudeKey];
     _center.longitude = [self getPreferenceAsFloat:kCoverageCenterLongitudeKey];
 
-    RMLog(@"Tile size: %lu pixel", (unsigned long)self.tileSideLength);
+    RMLog(@"Tile size: %lu pixel", (unsigned long)_tileSideLength);
     RMLog(@"Supported zoom range: %.0f - %.0f", self.minZoom, self.maxZoom);
     RMLog(@"Coverage area: (%2.6f,%2.6f) x (%2.6f,%2.6f)",
           _topLeft.latitude,
@@ -190,7 +190,7 @@
 
 #pragma mark RMTileSource methods
 
-- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache
+- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache scale:(float)scale
 {
     __block UIImage *image = nil;
 
@@ -242,11 +242,6 @@
     bbox.northEast = northEast;
 
     return bbox;
-}
-
-- (NSUInteger)tileSideLength
-{
-    return _tileSideLength;
 }
 
 - (NSString *)uniqueTilecacheKey

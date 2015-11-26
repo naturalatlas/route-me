@@ -41,7 +41,6 @@
     RMSphericalTrapezium _latitudeLongitudeBoundingBox;
 
     float _minZoom, _maxZoom;
-    NSUInteger _tileSideLength;
 }
 
 - (id)init
@@ -62,7 +61,6 @@
 
     _minZoom = kRMTileSourcesContainerMaxZoom;
     _maxZoom = kRMTileSourcesContainerMinZoom;
-    _tileSideLength = 0;
 
     return self;
 }
@@ -205,17 +203,6 @@
     self.minZoom = MIN(_minZoom, [tileSource minZoom]);
     self.maxZoom = MAX(_maxZoom, [tileSource maxZoom]);
 
-    if (_tileSideLength == 0)
-    {
-        _tileSideLength = [tileSource tileSideLength];
-    }
-    else if (_tileSideLength != [tileSource tileSideLength])
-    {
-        NSLog(@"The tilesource '%@' has a different tile side length than the tilesource container", [tileSource shortName]);
-        [_tileSourcesLock unlock];
-        return NO;
-    }
-
     RMSphericalTrapezium newLatitudeLongitudeBoundingBox = [tileSource latitudeLongitudeBoundingBox];
 
     double minX1 = _latitudeLongitudeBoundingBox.southWest.longitude;
@@ -343,7 +330,6 @@
 
     _minZoom = kRMTileSourcesContainerMaxZoom;
     _maxZoom = kRMTileSourcesContainerMinZoom;
-    _tileSideLength = 0;
 
     [_tileSourcesLock unlock];
 }
@@ -392,11 +378,6 @@
         maxZoom = kRMTileSourcesContainerMaxZoom;
 
     _maxZoom = maxZoom;
-}
-
-- (NSUInteger)tileSideLength
-{
-    return _tileSideLength;
 }
 
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBox

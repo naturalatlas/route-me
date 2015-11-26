@@ -88,12 +88,7 @@
     // no-op
 }
 
-- (NSUInteger)tileSideLength
-{
-    return tileProjection.tileSideLength;
-}
-
-- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache
+- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache scale:(float)scale
 {
     NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
 			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 

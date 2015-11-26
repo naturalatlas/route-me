@@ -208,7 +208,13 @@
     return [self canonicalURLForMapID:self.infoDictionary[@"id"]];
 }
 
+
 - (NSURL *)URLForTile:(RMTile)tile
+{
+    return [self URLForTile:tile scale:[[UIScreen mainScreen] scale]];
+}
+
+- (NSURL *)URLForTile:(RMTile)tile scale:(float)scale
 {
     NSInteger zoom = tile.zoom;
     NSInteger x    = tile.x;
@@ -229,7 +235,7 @@
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{x}" withString:[[NSNumber numberWithInteger:x]    stringValue]];
     tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@"{y}" withString:[[NSNumber numberWithInteger:y]    stringValue]];
 
-    if ([[UIScreen mainScreen] scale] > 1.0)
+    if (scale > 1.0)
         tileURLString = [tileURLString stringByReplacingOccurrencesOfString:@".png" withString:@"@2x.png"];
 
     if (_imageQuality != RMMapboxSourceQualityFull)
@@ -377,11 +383,6 @@
 - (NSString *)uniqueTilecacheKey
 {
     return _uniqueTilecacheKey;
-}
-
-- (NSUInteger)tileSideLength
-{
-    return ([RMMapboxSource isUsingLargeTiles] ? 512 : kMapboxDefaultTileSize);
 }
 
 - (NSString *)shortName

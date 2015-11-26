@@ -54,12 +54,22 @@
                                  userInfo:nil];
 }
 
+- (NSURL *)URLForTile:(RMTile)tile scale:(float)scale
+{
+    return [self URLForTile:tile];
+}
+
 - (NSArray *)URLsForTile:(RMTile)tile
 {
     return [NSArray arrayWithObjects:[self URLForTile:tile], nil];
 }
 
-- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache
+- (NSArray *)URLsForTile:(RMTile)tile scale:(float)scale
+{
+    return [NSArray arrayWithObjects:[self URLForTile:tile scale:scale], nil];
+}
+
+- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache scale:(float)scale
 {
     __block UIImage *image = nil;
 
@@ -73,7 +83,7 @@
     if (self.isCacheable)
     {
         image = [tileCache cachedImage:tile withCacheKey:[self uniqueTilecacheKey]];
-
+        
         if (image)
             return image;
     }
@@ -83,7 +93,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRequested object:[NSNumber numberWithUnsignedLongLong:RMTileKey(tile)]];
     });
 
-    NSArray *URLs = [self URLsForTile:tile];
+    NSArray *URLs = [self URLsForTile:tile scale:scale];
 
     if ([URLs count] == 0)
     {

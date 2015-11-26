@@ -98,15 +98,8 @@ typedef enum : NSUInteger {
 @property (nonatomic, readonly) double scaledMetersPerPixel;
 @property (nonatomic, readonly) double scaleDenominator; // The denominator in a cartographic scale like 1/24000, 1/50000, 1/2000000.
 @property (nonatomic, readonly) float screenScale;
-
-/** @name Supporting Retina Displays */
-
-/** A Boolean value that adjusts the display of map tile images for retina-capable screens.
-*
-*   If set to `YES`, the map tiles are drawn at double size, typically 512 pixels square instead of 256 pixels, in order to compensate for smaller features and to make them more legible. If tiles designed for retina devices are used, this value should be set to `NO` in order to display these tiles at the proper size. The default value is `NO`. */
-@property (nonatomic, assign)   BOOL adjustTilesForRetinaDisplay;
-
-@property (nonatomic, readonly) float adjustedZoomForRetinaDisplay; // takes adjustTilesForRetinaDisplay and screen scale into account
+@property (nonatomic, assign)   float tileScale;
+@property (nonatomic, readonly) float tileSideLength;
 
 /** @name Attributing Map Data */
 

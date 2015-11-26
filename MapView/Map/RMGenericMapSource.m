@@ -67,16 +67,24 @@
 
 - (NSURL *)URLForTile:(RMTile)tile
 {
+    return [self URLForTile:tile scale:[[UIScreen mainScreen] scale]];
+}
+
+- (NSURL *)URLForTile:(RMTile)tile scale:(float)scale
+{
     NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
               @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f",
               self, tile.zoom, self.minZoom, self.maxZoom);
 
-    NSString *scale = [self currentScale];
+    scale = [self closestSupportedScale:scale];
     NSMutableString *suffix = _suffix.mutableCopy;
     
-    if (![scale isEqualToString:@"1x"]) {
+    if (scale > 1) {
+        NSString *scaleString = @"@2x";
+        if(scale >= 3) scaleString = @"@3x";
+        
         NSUInteger i = [suffix rangeOfString:@"." options:NSBackwardsSearch].location;
-        [suffix insertString:[@"@" stringByAppendingString:scale] atIndex:i];
+        [suffix insertString:scaleString atIndex:i];
     }
     
     return [NSURL URLWithString:[NSString stringWithFormat:@"%@/%d/%d/%d%@", _prefix, tile.zoom, tile.x, tile.y, suffix]];
@@ -107,20 +115,11 @@
 	return _longAttribution;
 }
 
-- (NSString *)currentScale
+- (float)closestSupportedScale:(float)scale
 {
-    float scale = [[UIScreen mainScreen] scale];
-    if (scale >= 2.0 && [_supportedScales rangeOfString:@"3x"].location != NSNotFound) return @"3x";
-    if (scale >= 1.0 && [_supportedScales rangeOfString:@"2x"].location != NSNotFound) return @"2x";
-    return @"1x";
-}
-
-- (NSUInteger)tileSideLength
-{
-    NSString *scale = [self currentScale];
-    if ([scale isEqualToString:@"2x"]) return 512;
-    if ([scale isEqualToString:@"3x"]) return 768;
-    return 256;
+    if (scale > 2.0 && [_supportedScales rangeOfString:@"3x"].location != NSNotFound) return 3;
+    if (scale > 1.0 && [_supportedScales rangeOfString:@"2x"].location != NSNotFound) return 2;
+    return 1;
 }
 
 @end

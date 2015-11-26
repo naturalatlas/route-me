@@ -70,11 +70,6 @@
 /** A unique string representing the tile source in the cache in order to distinguish it from other tile sources. */
 @property (nonatomic, readonly) NSString *uniqueTilecacheKey;
 
-/** @name Configuring Tile Size */
-
-/** The number of pixels along the side of a tile image for this source. */
-@property (nonatomic, readonly) NSUInteger tileSideLength;
-
 /** @name Configuring Descriptive Properties */
 
 /** A short version of the tile source's name. */
@@ -96,8 +91,9 @@
 /** Provide an image for a given tile location using a given cache.
 *   @param tile The map tile in question.
 *   @param tileCache A tile cache to check first when providing the image.
+*   @param scale requested tile scale (1,2,3 etc). Image returned may not match scale if source doesn't support it.
 *   @return An image to display. */
-- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache;
+- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache scale:(float)scale;
 
 /** Check if the tile source can provide the requested tile.
  *  @param tile The map tile in question.

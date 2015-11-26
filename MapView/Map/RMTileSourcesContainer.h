@@ -37,9 +37,6 @@
 @property (nonatomic, assign) float minZoom;
 @property (nonatomic, assign) float maxZoom;
 
-// These properties are (and have to be) equal across all tile sources
-@property (nonatomic, readonly) NSUInteger tileSideLength;
-
 @property (nonatomic, weak, readonly) RMFractalTileProjection *mercatorToTileProjection;
 @property (nonatomic, weak, readonly) RMProjection *projection;
 

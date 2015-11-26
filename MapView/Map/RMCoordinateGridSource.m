@@ -109,7 +109,7 @@ static double coordinateGridSpacingDecimal[19] = {
     return self;
 }
 
-- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache
+- (UIImage *)imageForTile:(RMTile)tile inCache:(RMTileCache *)tileCache scale:(float)scale
 {
     if (tile.zoom < 0 || tile.zoom > 18)
         return nil;
@@ -125,13 +125,15 @@ static double coordinateGridSpacingDecimal[19] = {
     // Implementation
 
     RMProjectedRect planetBounds = self.projection.planetBounds;
+    
+    float tileSideLength = scale * 256;
 
-    double scale = (1<<tile.zoom);
-    double tileMetersPerPixel = planetBounds.size.width / (self.tileSideLength * scale);
-    double paddedTileSideLength = self.tileSideLength + (2.0 * kTileSidePadding);
+    double _scale = (1<<tile.zoom);
+    double tileMetersPerPixel = planetBounds.size.width / (tileSideLength * _scale);
+    double paddedTileSideLength = tileSideLength + (2.0 * kTileSidePadding);
 
-    CGPoint bottomLeft = CGPointMake((tile.x * self.tileSideLength) - kTileSidePadding,
-                                     ((scale - tile.y - 1) * self.tileSideLength) - kTileSidePadding);
+    CGPoint bottomLeft = CGPointMake((tile.x * tileSideLength) - kTileSidePadding,
+                                     ((_scale - tile.y - 1) * tileSideLength) - kTileSidePadding);
 
     RMProjectedRect normalizedProjectedRect;
     normalizedProjectedRect.origin.x = (bottomLeft.x * tileMetersPerPixel) - fabs(planetBounds.origin.x);
@@ -304,7 +306,7 @@ static double coordinateGridSpacingDecimal[19] = {
     image = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
 
-    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], CGRectMake(kTileSidePadding, kTileSidePadding, self.tileSideLength, self.tileSideLength));
+    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], CGRectMake(kTileSidePadding, kTileSidePadding, tileSideLength, tileSideLength));
     image = [UIImage imageWithCGImage:imageRef];
     CGImageRelease(imageRef);
 
