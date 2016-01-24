@@ -2993,8 +2993,9 @@
 
         for (RMAnnotation *annotation in previousVisibleAnnotations)
         {
-            if ( ! annotation.isUserLocationAnnotation)
-            {
+            // NOTE: not sure why this was here - if you reset the map position the user location annotation will still be visible in the wrong spot
+            // if ( ! annotation.isUserLocationAnnotation)
+            // {
                 if (_delegateHasWillHideLayerForAnnotation)
                     [_delegate mapView:self willHideLayerForAnnotation:annotation];
 
@@ -3004,7 +3005,7 @@
                     [_delegate mapView:self didHideLayerForAnnotation:annotation];
 
                 [_visibleAnnotations removeObject:annotation];
-            }
+            // }
         }
 
         previousVisibleAnnotations = nil;
