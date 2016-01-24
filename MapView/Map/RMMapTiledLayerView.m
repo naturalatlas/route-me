@@ -213,7 +213,12 @@
                     float nextTileX = floor(nextX),
                           nextTileY = floor(nextY);
 
-                    tileImage = [_tileSource imageForTile:RMTileMake((int)nextTileX, (int)nextTileY, currentZoom) inCache:[_mapView tileCache] scale:tileScale];
+                    RMTileCache *tileCache = [_mapView tileCache];
+                    RMTile tile = RMTileMake((int)nextTileX, (int)nextTileY, currentZoom);
+                    
+                    // Try retrieving tile from cache but otherwise skip it
+                    tileImage = [tileCache cachedImage:tile withCacheKey:[_tileSource uniqueTilecacheKey]];
+                    // tileImage = [_tileSource imageForTile:tile inCache:tileCache scale:tileScale];
 
                     if (IS_VALID_TILE_IMAGE(tileImage))
                     {
