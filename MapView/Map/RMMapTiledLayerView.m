@@ -43,6 +43,7 @@
 {
     __weak RMMapView *_mapView;
     id <RMTileSource> _tileSource;
+    NSMutableDictionary *_pendingTilesByKey;
 }
 
 @synthesize useSnapshotRenderer = _useSnapshotRenderer;
@@ -67,6 +68,7 @@
 
     _mapView = aMapView;
     _tileSource = aTileSource;
+    _pendingTilesByKey = [NSMutableDictionary dictionary];
 
     self.useSnapshotRenderer = NO;
 
@@ -135,6 +137,7 @@
             y = floor(fabs(rect.origin.y / rect.size.height));
 
 //        NSLog(@"Tile @ x:%d, y:%d, zoom:%d", x, y, zoom);
+        NSNumber *key = @(RMTileKey(RMTileMake(x, y, zoom)));
 
         UIGraphicsPushContext(context);
 
@@ -169,8 +172,9 @@
                     {
                         // ensure only one request for a URL at a time
                         //
-                        @synchronized ([(RMAbstractWebMapSource *)_tileSource URLsForTile:RMTileMake(x, y, zoom) scale:tileScale])
+                        if(![_pendingTilesByKey objectForKey:key])
                         {
+                            _pendingTilesByKey[key] = @(true);
                             // this will return quicker if cached since above attempt, else block on fetch
                             //
                             if (_tileSource.isCacheable && [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache] scale:tileScale])
@@ -182,6 +186,9 @@
                                     [self.layer setNeedsDisplayInRect:rect];
                                 });
                             }
+                            [_pendingTilesByKey removeObjectForKey:key];
+                        } else {
+                            // NSLog(@"Skipping duplicate request of x:%d, y:%d, zoom:%d", x, y, zoom);
                         }
                     });
                 }
