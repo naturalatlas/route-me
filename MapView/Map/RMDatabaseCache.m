@@ -57,6 +57,7 @@
     NSUInteger _capacity;
     NSUInteger _minimalPurge;
     NSTimeInterval _expiryPeriod;
+    BOOL _purging;
 }
 
 @synthesize databasePath = _databasePath;
@@ -325,6 +326,9 @@
 
 - (void)purgeTiles:(NSUInteger)count
 {
+    if (_purging) return;
+    _purging = true;
+    
     RMLog(@"purging %lu old tiles from the db cache", (unsigned long)count);
 
     [_writeQueueLock lock];
@@ -343,6 +347,7 @@
     [_writeQueueLock unlock];
 
     _tileCount = [self countTiles];
+    _purging = false;
 }
 
 - (void)removeAllCachedImages 
