@@ -2116,6 +2116,15 @@
 
 #pragma mark - TileSources
 
+- (void) setTileScale:(float)tileScale
+{
+    _tileScale = tileScale;
+    if (_tileSourcesContainer) {
+        // Recreate the map layer
+        [self createMapView];
+    }
+}
+
 - (float)tileSideLength
 {
     return 256 * _tileScale;
